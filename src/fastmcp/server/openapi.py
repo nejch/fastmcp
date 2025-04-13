@@ -459,6 +459,7 @@ class FastMCPOpenAPI(FastMCP):
         client: httpx.AsyncClient,
         name: str | None = None,
         route_maps: list[RouteMap] | None = None,
+        openapi_version: Literal["3.1", "3.0"] | None = None,
         **settings: Any,
     ):
         """
@@ -476,7 +477,9 @@ class FastMCPOpenAPI(FastMCP):
 
         self._client = client
 
-        http_routes = openapi.parse_openapi_to_http_routes(openapi_spec)
+        http_routes = openapi.parse_openapi_to_http_routes(
+            openapi_spec, openapi_version
+        )
 
         # Process routes
         route_maps = (route_maps or []) + DEFAULT_ROUTE_MAPPINGS

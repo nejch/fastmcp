@@ -354,12 +354,22 @@ def _extract_responses(
 
 # --- Main Parsing Function ---
 # (No changes needed in the main loop logic, only in the helpers it calls)
-def parse_openapi_to_http_routes(openapi_dict: dict[str, Any]) -> list[HTTPRoute]:
+def parse_openapi_to_http_routes(
+    openapi_dict: dict[str, Any], openapi_version: Literal["3.1", "3.0"] | None = None
+) -> list[HTTPRoute]:
     """
     Parses an OpenAPI schema dictionary into a list of HTTPRoute objects
     using the openapi-pydantic library.
     """
     routes: list[HTTPRoute] = []
+    match openapi_version:
+        case "3.0":
+            from openapi_pydantic.v3.v3_0 import OpenAPI
+        case "3.1":
+            from openapi_pydantic.v3.v3_1 import OpenAPI
+        case _:
+            from openapi_pydantic import OpenAPI
+
     try:
         openapi: OpenAPI = OpenAPI.model_validate(openapi_dict)
         logger.info(f"Successfully parsed OpenAPI schema version: {openapi.openapi}")

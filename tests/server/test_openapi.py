@@ -98,6 +98,27 @@ async def test_create_openapi_server(
     assert server.name == "Test App"
 
 
+async def test_create_openapi_v3_server(
+    fastapi_app: FastAPI, api_client: httpx.AsyncClient
+):
+    # fastapi does not support generating 3.0 specs
+    openapi_spec = {
+        "openapi": "3.0.3",
+        "info": {"title": "FastAPI", "version": "0.1.0"},
+        "paths": {},
+    }
+
+    server = FastMCPOpenAPI(
+        openapi_spec=openapi_spec,
+        client=api_client,
+        name="Test App",
+        openapi_version="3.0",
+    )
+
+    assert isinstance(server, FastMCP)
+    assert server.name == "Test App"
+
+
 async def test_create_openapi_server_classmethod(
     fastapi_app: FastAPI, api_client: httpx.AsyncClient
 ):
@@ -110,6 +131,23 @@ async def test_create_fastapi_server_classmethod(fastapi_app: FastAPI):
     server = FastMCP.from_fastapi(fastapi_app)
     assert isinstance(server, FastMCPOpenAPI)
     assert server.name == "FastAPI App"
+
+
+async def test_create_openapi_v3_server_classmethod(
+    fastapi_app: FastAPI, api_client: httpx.AsyncClient
+):
+    # fastapi does not support generating 3.0 specs
+    openapi_spec = {
+        "openapi": "3.0.3",
+        "info": {"title": "FastAPI", "version": "0.1.0"},
+        "paths": {},
+    }
+
+    server = FastMCP.from_openapi(
+        openapi_spec=openapi_spec, openapi_version="3.0", client=api_client
+    )
+    assert isinstance(server, FastMCPOpenAPI)
+    assert server.name == "OpenAPI FastMCP"
 
 
 class TestTools:

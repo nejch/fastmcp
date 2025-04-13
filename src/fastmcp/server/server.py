@@ -653,14 +653,23 @@ class FastMCP(Generic[LifespanResultT]):
 
     @classmethod
     def from_openapi(
-        cls, openapi_spec: dict[str, Any], client: httpx.AsyncClient, **settings: Any
+        cls,
+        openapi_spec: dict[str, Any],
+        client: httpx.AsyncClient,
+        openapi_version: Literal["3.1", "3.0"] | None = None,
+        **settings: Any,
     ) -> "FastMCPOpenAPI":
         """
         Create a FastMCP server from an OpenAPI specification.
         """
         from .openapi import FastMCPOpenAPI
 
-        return FastMCPOpenAPI(openapi_spec=openapi_spec, client=client, **settings)
+        return FastMCPOpenAPI(
+            openapi_spec=openapi_spec,
+            client=client,
+            openapi_version=openapi_version,
+            **settings,
+        )
 
     @classmethod
     def from_fastapi(
